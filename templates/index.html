@@ -13,25 +13,73 @@
 </head>
 <body>
     <h1>Student Management System</h1>
+
+    <h2>Add New Student</h2>
     <form action="/add" method="post">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" required>
-        <label for="grade">Grade:</label>
-        <input type="text" id="grade" name="grade" required>
-        <label for="reg">Reg No:</label>
-        <input type="number" id="reg" name="reg" required>
-        
+        <label for="Stud_ID">Student ID:</label>
+        <input type="number" id="Stud_ID" name="Stud_ID" required>
+
+        <label for="F_Name">First Name:</label>
+        <input type="text" id="F_Name" name="F_Name" required>
+
+        <label for="L_Name">Last Name:</label>
+        <input type="text" id="L_Name" name="L_Name" required>
+
+        <label for="DOB">Date of Birth:</label>
+        <input type="date" id="DOB" name="DOB" required>
+
+        <label for="Gender">Gender:</label>
+        <select id="Gender" name="Gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+        <h1></h1>
+        <label for="Email">Email:</label>
+        <input type="email" id="Email" name="Email" required>
+
+        <label for="Phone_No">Phone Number:</label>
+        <input type="tel" id="Phone_No" name="Phone_No" required>
+
+        <label for="Address">Address:</label>
+        <textarea id="Address" name="Address" required></textarea>
+
+        <h1></h1>
+        <label for="Dep_ID">Department ID:</label>
+        <input type="number" id="Dep_ID" name="Dep_ID" required>
+
         <button type="submit">Add Student</button>
     </form>
-    <h2>Students</h2>
-    <ul>
+
+    <h2>Student List</h2>
+    <table border="1">
+        <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>DOB</th>
+            <th>Gender</th>
+            <th>Email</th>
+            <th>Phone No</th>
+            <th>Address</th>
+            <th>Department ID</th>
+            <th>Actions</th>
+        </tr>
         {% for student in students %}
-            <li>{{ student[1] }} - Age: {{ student[2] }} - Grade: {{ student[3] }} RegNo: {{ student[4]}}
-                <a style="margin-right: 10%" href="#" onclick="confirmDelete( {{student[0]}})">Delete</a>
-            </li>
+        <tr>
+            <td>{{ student[0] }}</td>  <!-- Stud_ID -->
+            <td>{{ student[1] }} {{ student[2] }}</td>  <!-- F_Name + L_Name -->
+            <td>{{ student[3] }}</td>  <!-- DOB -->
+            <td>{{ student[4] }}</td>  <!-- Gender -->
+            <td>{{ student[5] }}</td>  <!-- Email -->
+            <td>{{ student[6] }}</td>  <!-- Phone_No -->
+            <td>{{ student[7] }}</td>  <!-- Address -->
+            <td>{{ student[8] }}</td>  <!-- Dep_ID -->
+            <td>
+                <a href="#" onclick="confirmDelete({{ student[0] }})" style="color: red;">Delete</a>
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
+
 </body>
 </html>
