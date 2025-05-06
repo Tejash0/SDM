@@ -3,83 +3,201 @@
 <head>
     <title>Student Management System</title>
     <script>
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.style.display = 'none');
+            document.getElementById(tabId).style.display = 'block';
+        }
+
         function confirmDelete(studentId) {
             if (confirm("Are you sure you want to delete this student?")) {
                 window.location.href = '/delete/' + studentId;
             }
         }
+
+        window.onload = function () {
+            showTab('{{ default_tab }}'); // Show default tab
+        };
     </script>
+    <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Student Management System</h1>
 
-    <h2>Add New Student</h2>
-    <form action="/add" method="post">
-        <label for="Stud_ID">Student ID:</label>
-        <input type="number" id="Stud_ID" name="Stud_ID" required>
+    <div class="header">
+        <h1>Student Management System</h1>
+        {% if session.get('user_id') %}
+            <a href="/logout" class="logout-button">Logout</a>
+        {% else %}
+            <a href="/login">Login</a> | <a href="/register">Register</a>
+        {% endif %}
+    </div>
+    
 
-        <label for="F_Name">First Name:</label>
-        <input type="text" id="F_Name" name="F_Name" required>
+    <!-- Tab Navigation -->
+    <div>
+        <button class="tab-button" onclick="showTab('addTab')">Enroll New Student</button>
+        <button class="tab-button" onclick="showTab('listTab')">Student List</button>
+        <button class="tab-button" onclick="showTab('searchTab')">Search Student</button>
+        <button class="tab-button" onclick="showTab('assignTab')">Assign Course</button>
+        <button class="tab-button" onclick="showTab('coursesTab')">View Courses</button>
+    </div>
 
-        <label for="L_Name">Last Name:</label>
-        <input type="text" id="L_Name" name="L_Name" required>
+    <!-- Add New Student Tab -->
+    <div id="addTab" class="tab-content" style="display: none;">
+        <h2>Enroll New Student</h2>
+        <form action="/add" method="post">
+            <label for="Stud_ID">Student ID:</label>
+            <input type="number" id="Stud_ID" name="Stud_ID" required>
 
-        <label for="DOB">Date of Birth:</label>
-        <input type="date" id="DOB" name="DOB" required>
+            <label for="F_Name">First Name:</label>
+            <input type="text" id="F_Name" name="F_Name" required>
 
-        <label for="Gender">Gender:</label>
-        <select id="Gender" name="Gender" required>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
+            <label for="L_Name">Last Name:</label>
+            <input type="text" id="L_Name" name="L_Name" required>
+
+            <label for="DOB">Date of Birth:</label>
+            <input type="date" id="DOB" name="DOB" required>
+
+            <label for="Gender">Gender:</label>
+            <select id="Gender" name="Gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="Email">Email:</label>
+            <input type="email" id="Email" name="Email" required>
+
+            <label for="Phone_No">Phone Number:</label>
+            <input type="tel" id="Phone_No" name="Phone_No" required>
+
+            <label for="Address">Address:</label>
+            <textarea id="Address" name="Address" required></textarea>
+
+            <label for="Dep_ID">Department ID:</label>
+            <input type="number" id="Dep_ID" name="Dep_ID" required>
+
+            <button type="submit">Add Student</button>
+        </form>
+    </div>
+
+    <!-- Assign Course Tab -->
+<div id="assignTab" class="tab-content" style="display: none;">
+    <h2>Assign Course to Student</h2>
+    <form action="/assign" method="post">
+        <label for="Stud_ID">Select Student:</label>
+        <select name="Stud_ID" required>
+            {% for s in students %}
+                <option value="{{ s[0] }}">{{ s[1] }} {{ s[2] }}</option>
+            {% endfor %}
         </select>
-        <h1></h1>
-        <label for="Email">Email:</label>
-        <input type="email" id="Email" name="Email" required>
 
-        <label for="Phone_No">Phone Number:</label>
-        <input type="tel" id="Phone_No" name="Phone_No" required>
+        <label for="Course_ID">Select Course:</label>
+        <select name="Course_ID" required>
+            {% for c in courses %}
+                <option value="{{ c[0] }}">{{ c[1] }}</option>
+            {% endfor %}
+        </select>
 
-        <label for="Address">Address:</label>
-        <textarea id="Address" name="Address" required></textarea>
+        <label for="Grade">Grade:</label>
+        <input type="text" name="Grade" required>
 
-        <h1></h1>
-        <label for="Dep_ID">Department ID:</label>
-        <input type="number" id="Dep_ID" name="Dep_ID" required>
+        <button type="submit">Assign</button>
+    </form>
+</div>
 
-        <button type="submit">Add Student</button>
+
+    <!-- Student List Tab -->
+    <div id="listTab" class="tab-content" style="display: none;">
+        <h2>Student List</h2>
+        <table>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>DOB</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Phone No</th>
+                <th>Address</th>
+                <th>Department ID</th>
+                <th>Actions</th>
+            </tr>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.Stud_ID }}</td>
+                <td>{{ student.F_Name }} {{ student.L_Name }}</td>
+                <td>{{ student.DOB }}</td>
+                <td>{{ student.Gender }}</td>
+                <td>{{ student.Email }}</td>
+                <td>{{ student.Phone_No }}</td>
+                <td>{{ student.Address }}</td>
+                <td>{{ student.Dep_ID }}</td>
+                <td>
+                    <a href="#" onclick="confirmDelete({{ student.Stud_ID }})">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Search Student Tab -->
+<div id="searchTab" class="tab-content" style="display: none;">
+    <h2>Search Student by ID</h2>
+    <form action="/search" method="post">
+        <label for="search_id">Student ID:</label>
+        <input type="number" id="search_id" name="search_id" required>
+        <button type="submit">Search</button>
     </form>
 
-    <h2>Student List</h2>
-    <table border="1">
-        <tr>
-            <th>Student ID</th>
-            <th>Name</th>
-            <th>DOB</th>
-            <th>Gender</th>
-            <th>Email</th>
-            <th>Phone No</th>
-            <th>Address</th>
-            <th>Department ID</th>
-            <th>Actions</th>
-        </tr>
-        {% for student in students %}
-        <tr>
-            <td>{{ student[0] }}</td>  <!-- Stud_ID -->
-            <td>{{ student[1] }} {{ student[2] }}</td>  <!-- F_Name + L_Name -->
-            <td>{{ student[3] }}</td>  <!-- DOB -->
-            <td>{{ student[4] }}</td>  <!-- Gender -->
-            <td>{{ student[5] }}</td>  <!-- Email -->
-            <td>{{ student[6] }}</td>  <!-- Phone_No -->
-            <td>{{ student[7] }}</td>  <!-- Address -->
-            <td>{{ student[8] }}</td>  <!-- Dep_ID -->
-            <td>
-                <a href="#" onclick="confirmDelete({{ student[0] }})" style="color: red;">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+    {% if search_result %}
+        <h3>Student Details:</h3>
+        <ul>
+            <li><strong>Student ID:</strong> {{ search_result.Stud_ID }}</li>
+            <li><strong>Name:</strong> {{ search_result.F_Name }} {{ search_result.L_Name }}</li>
+            <li><strong>DOB:</strong> {{ search_result.DOB }}</li>
+            <li><strong>Gender:</strong> {{ search_result.Gender }}</li>
+            <li><strong>Email:</strong> {{ search_result.Email }}</li>
+            <li><strong>Phone No:</strong> {{ search_result.Phone_No }}</li>
+            <li><strong>Address:</strong> {{ search_result.Address }}</li>
+            <li><strong>Department ID:</strong> {{ search_result.Dep_ID }}</li>
+            <li><strong>Department Name:</strong> {{ search_result.Dept_Name }}</li>
+        </ul>
 
+        <h3>Enrolled Courses:</h3>
+        {% if courses %}
+            <ul>
+                {% for course in courses %}
+                    <li>{{ course.Name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No courses enrolled.</p>
+        {% endif %}
+        
+    {% elif search_attempted %}
+        <p style="color:red;">Student not found.</p>
+    {% endif %}
+</div>
+
+
+    <div id="coursesTab" class="tab-content" style="display: none;">
+        <h2>All Available Courses</h2>
+        <table border="1">
+            <tr>
+                <th>Course ID</th>
+                <th>Course Name</th>
+                <th>Department ID</th>
+            </tr>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.Course_ID }}</td>
+                <td>{{ course.Name }}</td>
+                <td>{{ course.Dep_ID }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    
 </body>
 </html>
